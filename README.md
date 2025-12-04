@@ -1,14 +1,18 @@
 # simpleflaskservice
 
+![rzfeeser-simpleflaskservice](images/rzfeeser-simpleflaskservice.png)
+
 This repo provides a simple Python-Flask Server with several RESTful APIs for learning and testing. I created it to learn about running containers within Pods in Kubernetes, but could be used to test across many orchestrated environments. Deployed on a virtual machine, or baremetal, it could be a useful tool demonstrating HTTP connectivity.  
 
-The current release of this code is also available as a containerized image on https://hub.docker.io/.  
+The current release of this code can be deployed from the GitHub Container Repository (GHCR): [https://github.com/rzfeeser/simpleflaskservice/pkgs/container/simpleflaskservice](https://github.com/rzfeeser/simpleflaskservice/pkgs/container/simpleflaskservice)
 
 Alternatively, this code can easily be transformed into a docker image following the steps included in this repo. Steps on deploying code found in this repository can be found at the bottom of the README file.
 
 ## simpleflaskserver 0.1 API endpoints 
 
 ### /env [0.1]
+
+        Methods Accepted: GET
 
         HTTP/1.1 200 OK
         $HTTP_HEADERZ
@@ -56,7 +60,7 @@ Alternatively, this code can easily be transformed into a docker image following
          }
 
 
-### /talkingparrot/?say=[ANYTHING] [0.1]
+### /talkingparrot?say=[ANYTHING] [0.1]
 Returns a 200 containing a "SQUAKK!!" + the [ANYTHING] string sent to the API endpoint.
 
         HTTP/1.1 200 OK
@@ -78,34 +82,58 @@ By setting the following environment variables, you can change the runtime behav
 
 1. First, `git clone` the repository to your local machine.
 
-        git clone https://github.com/rzfeeser/simpleflaskservice
+   `git clone https://github.com/rzfeeser/simpleflaskservice`
 
 0. Ensure Python 3.6+ has been installed on Debian / Ubuntu Machines
 
-        sudo apt install python3-pip
+    `sudo apt install python3-pip`
 
 0. Ensure Python 3.6+ has been installed, then use `pip` to install Flask.
 
-        python3 -m pip install flask
+   `python3 -m pip install flask`
 
 0. Run the code with Python 3.6+
 
-        python3 simpleflaskservice.py
+    `python3 simpleflaskservice.py`
         
 0. Set the environmental variable `VERSION` to "24601" and `PORT0` to "8887", then launch the server.
 
-        VERSION=24601 PORT0=8887 python3 simpleflaskservice.py
+    `VERSION=24601 PORT0=8887 python3 simpleflaskservice.py`
 
 ## How to Deploy on Docker
 
 1. First build an image.
 
-        sudo docker build -t simpleservice -f Dockerfile .
+    `sudo docker build -t simpleservice -f Dockerfile .`
 
-0. Launch the image in docker with the port `9010` pointing to `9876`, and without hogging up the screen (-d).
+0. Launch the image in docker with the port `9010` pointing to `9876`, and without hogging up the screen (`-d`).
 
-        docker run -d -p 9010:9876 simpleflaskservice
+    `docker run -d -p 9010:9876 simpleflaskservice`
 
 0. **OR** Launch the image in docker with a random port pointing to the exposed ports.
 
-        docker run -P simpleflaskservice
+    `docker run -P simpleflaskservice`
+
+## Deploy from GitHub Container Repository (GHCR)
+
+1. Launch the image in docker with the port `9010` pointing to `9876`, and without hogging up the screen (`-d`)
+
+    `docker run -d -p 9010:9876 ghcr.io/rzfeeser/simpleflaskservice:main`
+
+## Tests
+
+You can run the following tests to confirm the server is running:
+
+```
+curl localhost:9010/env
+curl localhost:9010/info
+curl localhost:9010/alta3
+curl localhost:9010/health
+curl localhost:9010/talkingparrot?say=rzfeeser%20authored%20talking%20parrot
+```
+
+## Troubleshooting
+
+1. If you're new to Docker, the following command will stop and delete all running containers on your system. This can be especially useful if you are "stuck" trying to get the service to redeploy. Try starting the deployment instructions over after running this command.
+
+    `docker ps -aq | xargs docker stop | xargs docker rm`
